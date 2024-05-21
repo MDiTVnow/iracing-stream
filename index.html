@@ -27,3 +27,50 @@
     </iframe>
 </body>
 </html>
+<script src="https://www.gstatic.com/firebasejs/9.4.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.4.0/firebase-database.js"></script>
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    databaseURL: "YOUR_DATABASE_URL",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
+
+<div id="chat">
+  <div id="chat-box"></div>
+  <input type="text" id="message-input" placeholder="Type your message...">
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+  // Reference to the Firebase database
+  var database = firebase.database();
+
+  // Function to send a message
+  function sendMessage() {
+    var messageInput = document.getElementById("message-input");
+    var message = messageInput.value;
+    if (message.trim() !== "") {
+      database.ref('chat').push({
+        message: message
+      });
+      messageInput.value = "";
+    }
+  }
+
+  // Function to display messages
+  database.ref('chat').on('child_added', function(snapshot) {
+    var message = snapshot.val().message;
+    var chatBox = document.getElementById('chat-box');
+    chatBox.innerHTML += '<p>' + message + '</p>';
+  });
+</script>
